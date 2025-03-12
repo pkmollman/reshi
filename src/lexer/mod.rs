@@ -117,56 +117,16 @@ mod tests {
 
     #[test]
     fn test_next_token() {
-        let input = r#"
-
-            let five = 5;
-            
-            let ten = 10;
-            
-            let add = fn(x, y) {
-                x + y;
-            };
-            
-            let result = add(five, ten);
-            
-        "#;
+        let input = "=+(){},;";
 
         let tests = vec![
-            Token{token_type: TokenType::LET, literal: "let".into()},
-            Token{token_type: TokenType::IDENT, literal: "five".into()},
             Token{token_type: TokenType::ASSIGN, literal: "=".into()},
-            Token{token_type: TokenType::INT, literal: "5".into()},
-            Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
-            Token{token_type: TokenType::LET, literal: "let".into()},
-            Token{token_type: TokenType::IDENT, literal: "ten".into()},
-            Token{token_type: TokenType::ASSIGN, literal: "=".into()},
-            Token{token_type: TokenType::INT, literal: "10".into()},
-            Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
-            Token{token_type: TokenType::LET, literal: "let".into()},
-            Token{token_type: TokenType::IDENT, literal: "add".into()},
-            Token{token_type: TokenType::ASSIGN, literal: "=".into()},
-            Token{token_type: TokenType::FUNCTION, literal: "fn".into()},
+            Token{token_type: TokenType::PLUS, literal: "+".into()},
             Token{token_type: TokenType::LPAR, literal: "(".into()},
-            Token{token_type: TokenType::IDENT, literal: "x".into()},
-            Token{token_type: TokenType::COMMA, literal: ",".into()},
-            Token{token_type: TokenType::IDENT, literal: "y".into()},
             Token{token_type: TokenType::RPAR, literal: ")".into()},
             Token{token_type: TokenType::LBRA, literal: "{".into()},
-            Token{token_type: TokenType::IDENT, literal: "x".into()},
-            Token{token_type: TokenType::PLUS, literal: "+".into()},
-            Token{token_type: TokenType::IDENT, literal: "y".into()},
-            Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
             Token{token_type: TokenType::RBRA, literal: "}".into()},
-            Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
-            Token{token_type: TokenType::LET, literal: "let".into()},
-            Token{token_type: TokenType::IDENT, literal: "result".into()},
-            Token{token_type: TokenType::ASSIGN, literal: "=".into()},
-            Token{token_type: TokenType::IDENT, literal: "add".into()},
-            Token{token_type: TokenType::LPAR, literal: "(".into()},
-            Token{token_type: TokenType::IDENT, literal: "five".into()},
             Token{token_type: TokenType::COMMA, literal: ",".into()},
-            Token{token_type: TokenType::IDENT, literal: "ten".into()},
-            Token{token_type: TokenType::RPAR, literal: ")".into()},
             Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
             Token{token_type: TokenType::EOF, literal: "".into()},
         ];

@@ -16,16 +16,17 @@ let result = add(five, ten);
 "#;
 
 fn main() {
-    let mut l = Lexer::new(reshi_script.into());
-    loop {
-        let token = l.next_token();
-        match token.token_type {
-            TokenType::EOF => {
-                break;
-            }
-            _ => {
-                println!("found: {:?}", token)
-            }
-        }
-    }
+    // let mut l = Lexer::new(reshi_script.into());
+    // loop {
+    //     let token = l.next_token();
+    //     match token.token_type {
+    //         TokenType::EOF => {
+    //             break;
+    //         }
+    //         _ => {
+    //             println!("found: {:?}", token)
+    //         }
+    //     }
+    // }
+    println!("Reshi");
 }
