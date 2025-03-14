@@ -1,3 +1,5 @@
+use crate::ast::*;
+
 
 #[derive(Debug, PartialEq)]
 pub enum TokenType {
@@ -59,4 +61,32 @@ impl TokenType {
 pub struct Token {
     pub token_type: TokenType,
     pub literal: String,
+}
+
+pub struct LetStatement {
+    pub token: Token,
+    pub name: Identifier,
+    pub value: dyn Expression,
+}
+
+impl Node for LetStatement {
+    fn token_literal(&self) -> String {
+        self.token.literal.clone()
+    }
+}
+
+impl Statement for LetStatement {
+    fn statement_node(&self) {}
+}
+
+type Identifier = Token;
+
+impl Node for Identifier {
+    fn token_literal(&self) -> String {
+        self.literal.clone()
+    }
+}
+
+impl Expression for Identifier {
+    fn expression_node(&self) {}
 }
