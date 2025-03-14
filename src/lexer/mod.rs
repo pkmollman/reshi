@@ -239,6 +239,12 @@ mod tests {
             !-/*5;
 
             5 < 10 > 5;
+
+            if (5 < 10) {
+                return true;
+            } else {
+                return false;
+            }
             
         "#;
 
@@ -296,6 +302,24 @@ mod tests {
             Token{token_type: TokenType::GT, literal: ">".into()},
             Token{token_type: TokenType::INT, literal: "5".into()},
             Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
+
+            Token{token_type: TokenType::IF, literal: "if".into()},
+            Token{token_type: TokenType::LPAR, literal: "(".into()},
+            Token{token_type: TokenType::INT, literal: "5".into()},
+            Token{token_type: TokenType::LT, literal: "<".into()},
+            Token{token_type: TokenType::INT, literal: "10".into()},
+            Token{token_type: TokenType::RPAR, literal: ")".into()},
+            Token{token_type: TokenType::LBRA, literal: "{".into()},
+            Token{token_type: TokenType::RETURN, literal: "return".into()},
+            Token{token_type: TokenType::TRUE, literal: "true".into()},
+            Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
+            Token{token_type: TokenType::RBRA, literal: "}".into()},
+            Token{token_type: TokenType::ELSE, literal: "else".into()},
+            Token{token_type: TokenType::LBRA, literal: "{".into()},
+            Token{token_type: TokenType::RETURN, literal: "return".into()},
+            Token{token_type: TokenType::FALSE, literal: "false".into()},
+            Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
+            Token{token_type: TokenType::RBRA, literal: "}".into()},
 
             Token{token_type: TokenType::EOF, literal: "".into()},
         ];
