@@ -1,5 +1,8 @@
 mod lexer;
+mod ast;
+mod token;
 use crate::lexer::*;
+use crate::token::TokenType;
 
 fn main() {
     let stdin = std::io::stdin();
