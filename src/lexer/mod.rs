@@ -227,8 +227,6 @@ impl Lexer {
                 literal: "".into()
             }
         };
-
-        println!("token: {}", token.literal);
         token
     }
     pub fn read_identifier(&mut self) -> Token {
@@ -248,7 +246,6 @@ impl Lexer {
     pub fn read_number(&mut self) -> Token {
         let position = self.position;
         while let Some(character) = self.character {
-            println!("{}", character);
             if !character.is_digit(10) {
                 break;
             }
