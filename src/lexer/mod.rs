@@ -14,7 +14,7 @@ pub enum TokenType {
     GT,
     LT,
     EQ,
-    NOT_EQ,
+    NEQ,
     COMMA,
     SEMICOLON,
     LPAR,
@@ -155,7 +155,7 @@ impl Lexer {
                                     if next_char == '=' {
                                         self.read_char();
                                         Token{
-                                            token_type: TokenType::NOT_EQ,
+                                            token_type: TokenType::NEQ,
                                             literal: "!=".into(),
                                         }
                                     } else {
@@ -378,7 +378,7 @@ mod tests {
             Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
 
             Token{token_type: TokenType::INT, literal: "10".into()},
-            Token{token_type: TokenType::NOT_EQ, literal: "!=".into()},
+            Token{token_type: TokenType::NEQ, literal: "!=".into()},
             Token{token_type: TokenType::INT, literal: "9".into()},
             Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
 
