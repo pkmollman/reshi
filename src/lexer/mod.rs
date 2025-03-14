@@ -25,6 +25,15 @@ impl Lexer {
         l.read_char();
         return l;
     }
+    pub fn eat_whitespace(&mut self) {
+        while let Some(character) = self.character {
+            if character.is_whitespace() {
+                self.read_char();
+            } else {
+                break;
+            }
+        }
+    }
     pub fn read_char(&mut self) {
         if self.read_position >= self.chars.len() {
             self.character = None;
@@ -34,15 +43,17 @@ impl Lexer {
         self.position = self.read_position;
         self.read_position += 1;
     }
+    
     pub fn next_token(&mut self) -> Token {
-        match self.character {
+        self.eat_whitespace();
+        let token = match self.character {
             Some(character) => {
-                self.read_char();
-                if character.is_alphabetic() {
-                    let token = self.read_identifier();
-
+                if character.is_digit(10) {
+                    self.read_number()
+                } else if character.is_alphabetic() {
+                    self.read_identifier()
                 } else {
-                    match character {
+                    let token = match character {
                         '=' => Token{
                             token_type: TokenType::ASSIGN,
                             literal: character.to_string(),
@@ -79,14 +90,17 @@ impl Lexer {
                             token_type: TokenType::ILLEGAL,
                             literal: character.to_string(),
                         }
-                    }
+                    };
+                    self.read_char();
+                    token
                 }
             }
             None => Token {
                 token_type: TokenType::EOF,
                 literal: "".into()
             }
-        }
+        };
+        token
     }
     pub fn read_identifier(&mut self) -> Token {
         let position = self.position;
@@ -98,7 +112,22 @@ impl Lexer {
         }
         let literal = self.input[position..self.position].to_string();
         return Token {
-            token_type: self.lookup_ident(literal.clone()),
+            token_type: parse_identifier(&literal),
+            literal: literal,
+        }
+    }
+    pub fn read_number(&mut self) -> Token {
+        let position = self.position;
+        while let Some(character) = self.character {
+            println!("{}", character);
+            if !character.is_digit(10) {
+                break;
+            }
+            self.read_char();
+        }
+        let literal = self.input[position..self.position].to_string();
+        return Token {
+            token_type: TokenType::INT,
             literal: literal,
         }
     }
@@ -128,6 +157,24 @@ pub enum TokenType {
     // kewords
     FUNCTION,
     LET,
+}
+
+pub fn parse_identifier(literal: &String) -> TokenType {
+    match literal.as_str() {
+        "fn" => TokenType::FUNCTION,
+        "let" => TokenType::LET,
+        _ => TokenType::IDENT,
+    }
+}
+
+impl TokenType {
+    pub fn is_keyword(&self) -> bool {
+        match self {
+            TokenType::FUNCTION => true,
+            TokenType::LET => true,
+            _ => false,
+        }
+    }
 }
 
 #[cfg(test)]
