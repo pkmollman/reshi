@@ -1,4 +1,58 @@
 
+#[derive(Debug, PartialEq)]
+pub enum TokenType {
+    ILLEGAL,
+    EOF,
+    IDENT,
+    INT,
+    ASSIGN,
+    PLUS,
+    MINUS,
+    ASTERISCK,
+    SLASH,
+    BANG,
+    GT,
+    LT,
+    COMMA,
+    SEMICOLON,
+    LPAR,
+    RPAR,
+    LBRA,
+    RBRA,
+
+    // kewords
+    FUNCTION,
+    LET,
+    FALSE,
+    TRUE,
+    IF,
+    ELSE,
+    RETURN,
+}
+
+pub fn parse_identifier(literal: &String) -> TokenType {
+    match literal.as_str() {
+        "fn"     => TokenType::FUNCTION,
+        "let"    => TokenType::LET,
+        "false"  => TokenType::FALSE,
+        "true"   => TokenType::TRUE,
+        "if"     => TokenType::IF,
+        "else"   => TokenType::ELSE,
+        "return" => TokenType::RETURN,
+        _ => TokenType::IDENT,
+    }
+}
+
+impl TokenType {
+    pub fn is_keyword(&self) -> bool {
+        match self {
+            TokenType::FUNCTION => true,
+            TokenType::LET => true,
+            _ => false,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum LexerReadResult {
     Ok,
@@ -62,6 +116,30 @@ impl Lexer {
                             token_type: TokenType::PLUS,
                             literal: character.to_string(),
                         },
+                        '-' => Token{
+                            token_type: TokenType::MINUS,
+                            literal: character.to_string(),
+                        },
+                        '!' => Token{
+                            token_type: TokenType::BANG,
+                            literal: character.to_string(),
+                        },
+                        '/' => Token{
+                            token_type: TokenType::SLASH,
+                            literal: character.to_string(),
+                        },
+                        '*' => Token{
+                            token_type: TokenType::ASTERISCK,
+                            literal: character.to_string(),
+                        },
+                        '<' => Token{
+                            token_type: TokenType::LT,
+                            literal: character.to_string(),
+                        },
+                        '>' => Token{
+                            token_type: TokenType::GT,
+                            literal: character.to_string(),
+                        },
                         '(' => Token{
                             token_type: TokenType::LPAR,
                             literal: character.to_string(),
@@ -86,6 +164,7 @@ impl Lexer {
                             token_type: TokenType::SEMICOLON,
                             literal: character.to_string(),
                         },
+
                         _ => Token{
                             token_type: TokenType::ILLEGAL,
                             literal: character.to_string(),
@@ -139,44 +218,6 @@ pub struct Token {
     pub literal: String,
 }
 
-#[derive(Debug, PartialEq)]
-pub enum TokenType {
-    ILLEGAL,
-    EOF,
-    IDENT,
-    INT,
-    ASSIGN,
-    PLUS,
-    COMMA,
-    SEMICOLON,
-    LPAR,
-    RPAR,
-    LBRA,
-    RBRA,
-
-    // kewords
-    FUNCTION,
-    LET,
-}
-
-pub fn parse_identifier(literal: &String) -> TokenType {
-    match literal.as_str() {
-        "fn" => TokenType::FUNCTION,
-        "let" => TokenType::LET,
-        _ => TokenType::IDENT,
-    }
-}
-
-impl TokenType {
-    pub fn is_keyword(&self) -> bool {
-        match self {
-            TokenType::FUNCTION => true,
-            TokenType::LET => true,
-            _ => false,
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -194,6 +235,10 @@ mod tests {
             };
             
             let result = add(five, ten);
+
+            !-/*5;
+
+            5 < 10 > 5;
             
         "#;
 
@@ -203,11 +248,13 @@ mod tests {
             Token{token_type: TokenType::ASSIGN, literal: "=".into()},
             Token{token_type: TokenType::INT, literal: "5".into()},
             Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
+
             Token{token_type: TokenType::LET, literal: "let".into()},
             Token{token_type: TokenType::IDENT, literal: "ten".into()},
             Token{token_type: TokenType::ASSIGN, literal: "=".into()},
             Token{token_type: TokenType::INT, literal: "10".into()},
             Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
+
             Token{token_type: TokenType::LET, literal: "let".into()},
             Token{token_type: TokenType::IDENT, literal: "add".into()},
             Token{token_type: TokenType::ASSIGN, literal: "=".into()},
@@ -224,6 +271,7 @@ mod tests {
             Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
             Token{token_type: TokenType::RBRA, literal: "}".into()},
             Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
+
             Token{token_type: TokenType::LET, literal: "let".into()},
             Token{token_type: TokenType::IDENT, literal: "result".into()},
             Token{token_type: TokenType::ASSIGN, literal: "=".into()},
@@ -234,6 +282,21 @@ mod tests {
             Token{token_type: TokenType::IDENT, literal: "ten".into()},
             Token{token_type: TokenType::RPAR, literal: ")".into()},
             Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
+
+            Token{token_type: TokenType::BANG, literal: "!".into()},
+            Token{token_type: TokenType::MINUS, literal: "-".into()},
+            Token{token_type: TokenType::SLASH, literal: "/".into()},
+            Token{token_type: TokenType::ASTERISCK, literal: "*".into()},
+            Token{token_type: TokenType::INT, literal: "5".into()},
+            Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
+
+            Token{token_type: TokenType::INT, literal: "5".into()},
+            Token{token_type: TokenType::LT, literal: "<".into()},
+            Token{token_type: TokenType::INT, literal: "10".into()},
+            Token{token_type: TokenType::GT, literal: ">".into()},
+            Token{token_type: TokenType::INT, literal: "5".into()},
+            Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
+
             Token{token_type: TokenType::EOF, literal: "".into()},
         ];
 
