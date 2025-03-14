@@ -13,6 +13,8 @@ pub enum TokenType {
     BANG,
     GT,
     LT,
+    EQ,
+    NOT_EQ,
     COMMA,
     SEMICOLON,
     LPAR,
@@ -62,8 +64,8 @@ pub enum LexerReadResult {
 pub struct Lexer {
     pub input: String,
     pub chars: Vec<char>,
-    pub position: usize,
-    pub read_position: usize,
+    pub position: usize, // points to current char
+    pub read_position: usize, // next char
     pub character: Option<char>,
 }
 
@@ -97,6 +99,14 @@ impl Lexer {
         self.position = self.read_position;
         self.read_position += 1;
     }
+
+    pub fn peek_char(&self) -> Option<char> {
+        if self.read_position >= self.chars.len() {
+            return None
+        } else {
+            Some(self.chars[self.read_position])
+        }
+    }
     
     pub fn next_token(&mut self) -> Token {
         self.eat_whitespace();
@@ -108,9 +118,28 @@ impl Lexer {
                     self.read_identifier()
                 } else {
                     let token = match character {
-                        '=' => Token{
-                            token_type: TokenType::ASSIGN,
-                            literal: character.to_string(),
+                        '=' => {
+                            match self.peek_char() {
+                                Some(next_char) => {
+                                    if next_char == '=' {
+                                        self.read_char();
+                                        Token{
+                                            token_type: TokenType::EQ,
+                                            literal: "==".into(),
+                                        }
+                                    } else {
+                                        Token{
+                                            token_type: TokenType::ASSIGN,
+                                            literal: character.to_string(),
+                                        }
+                                    }
+                                }
+                                None => Token{
+                                    token_type: TokenType::ASSIGN,
+                                    literal: character.to_string(),
+                                }
+
+                            }
                         },
                         '+' => Token{
                             token_type: TokenType::PLUS,
@@ -120,9 +149,28 @@ impl Lexer {
                             token_type: TokenType::MINUS,
                             literal: character.to_string(),
                         },
-                        '!' => Token{
-                            token_type: TokenType::BANG,
-                            literal: character.to_string(),
+                        '!' => {
+                            match self.peek_char() {
+                                Some(next_char) => {
+                                    if next_char == '=' {
+                                        self.read_char();
+                                        Token{
+                                            token_type: TokenType::NOT_EQ,
+                                            literal: "!=".into(),
+                                        }
+                                    } else {
+                                        Token{
+                                            token_type: TokenType::BANG,
+                                            literal: character.to_string(),
+                                        }
+                                    }
+                                }
+                                None => Token{
+                                    token_type: TokenType::BANG,
+                                    literal: character.to_string(),
+                                }
+
+                            }
                         },
                         '/' => Token{
                             token_type: TokenType::SLASH,
@@ -179,6 +227,8 @@ impl Lexer {
                 literal: "".into()
             }
         };
+
+        println!("token: {}", token.literal);
         token
     }
     pub fn read_identifier(&mut self) -> Token {
@@ -245,6 +295,10 @@ mod tests {
             } else {
                 return false;
             }
+
+            10 == 10;
+
+            10 != 9;
             
         "#;
 
@@ -320,6 +374,16 @@ mod tests {
             Token{token_type: TokenType::FALSE, literal: "false".into()},
             Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
             Token{token_type: TokenType::RBRA, literal: "}".into()},
+
+            Token{token_type: TokenType::INT, literal: "10".into()},
+            Token{token_type: TokenType::EQ, literal: "==".into()},
+            Token{token_type: TokenType::INT, literal: "10".into()},
+            Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
+
+            Token{token_type: TokenType::INT, literal: "10".into()},
+            Token{token_type: TokenType::NOT_EQ, literal: "!=".into()},
+            Token{token_type: TokenType::INT, literal: "9".into()},
+            Token{token_type: TokenType::SEMICOLON, literal: ";".into()},
 
             Token{token_type: TokenType::EOF, literal: "".into()},
         ];
