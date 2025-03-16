@@ -31,3 +31,35 @@ impl Parser {
         }
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_let_statements() {
+        let input = r#"
+        
+        let x = 5;
+
+        let y = 10;
+
+        let foobar = 838383;
+        
+        "#;
+
+
+        let mut lexer = Lexer::new(input.into());
+
+
+        let mut parser = Parser::new(Rc::new(RefCell::new(lexer)));
+
+        let mut program = parser.parse_program();
+
+        if program.statements.len() != 3 {
+            panic!("program has {} statements, instead of 3", program.statements.len())
+        }
+
+    }
+}
